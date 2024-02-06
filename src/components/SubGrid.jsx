@@ -1,7 +1,16 @@
 import Cell from "./Cell.jsx";
 import Card from "./Card.jsx";
+import EmptyCell from "./EmptyCell.jsx";
+import { useState } from "react";
+import Digits from "./Digits.jsx";
 
 const SubGrid = ({ filledCells }) => {
+  const [openDialog, setOpenDialog] = useState(false);
+
+  function setOpenDialogHandler() {
+    setOpenDialog((prev) => !prev);
+  }
+
   const cells = [];
   for (let i = 0; i < 9; i++) {
     let flag = false;
@@ -12,7 +21,7 @@ const SubGrid = ({ filledCells }) => {
           cells.push(
             <Cell>
               <Card number={cell.number} color={"bg-amber-950"} />
-            </Cell>,
+            </Cell>
           );
         }
       });
@@ -20,8 +29,8 @@ const SubGrid = ({ filledCells }) => {
     if (!flag) {
       cells.push(
         <Cell>
-          <Card color={"bg-amber-950"} />
-        </Cell>,
+          <EmptyCell setDialog={setOpenDialogHandler} color={"bg-amber-950"} />
+        </Cell>
       );
     }
   }
@@ -31,6 +40,7 @@ const SubGrid = ({ filledCells }) => {
       {cells.map((cell) => {
         return cell;
       })}
+      {openDialog && <Digits />}
     </div>
   );
 };
