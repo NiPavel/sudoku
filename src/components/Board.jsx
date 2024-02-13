@@ -1,21 +1,34 @@
 import Container from "./Container.jsx";
-import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import Cell from "./Cell.jsx";
 import Card from "./Card.jsx";
+import { copy, initialize, collectColumns } from "../store/boardSlice.js";
 
 export default function Board() {
+  const dispatch = useDispatch();
   const [showCollectButtons, setShowCollectButtons] = useState(false);
 
   const showCollectHandler = () => {
     setShowCollectButtons(true);
   };
 
+  const startGame = () => {
+    dispatch(initialize());
+    dispatch(copy());
+  };
+
+  const collectColumnsHandler = () => {
+    dispatch(collectColumns());
+  };
+
   const counter = useSelector((state) => state.board.filledCellsCounter);
-  const board = useSelector((state) => state.board.board1);
+  const board = useSelector((state) => state.board.board);
   const board2 = useSelector((state) => state.board.board2);
 
-  console.log(board2);
+  const test = useSelector((state) => state.board.bigArray);
+
+  console.log(test);
 
   return (
     <Container>
@@ -65,6 +78,12 @@ export default function Board() {
         <div className="flex flex-col m-2 justify-around">
           <button
             className="flex m-2 justify-around text-black p-4 tetx-xl border border-black rounded-2xl hover:bg-gray-200"
+            onClick={startGame}
+          >
+            Start
+          </button>
+          <button
+            className="flex m-2 justify-around text-black p-4 tetx-xl border border-black rounded-2xl hover:bg-gray-200"
             onClick={showCollectHandler}
           >
             Verify
@@ -74,7 +93,10 @@ export default function Board() {
               <button className="text-black p-4 tetx-xl border border-black rounded-2xl hover:bg-gray-200">
                 Collect Rows
               </button>
-              <button className="text-black p-4 tetx-xl border border-black rounded-2xl hover:bg-gray-200 mx-4">
+              <button
+                onClick={collectColumnsHandler}
+                className="text-black p-4 tetx-xl border border-black rounded-2xl hover:bg-gray-200 mx-4"
+              >
                 Collect Columns
               </button>
               <button className="text-black p-4 tetx-xl border border-black rounded-2xl hover:bg-gray-200">
