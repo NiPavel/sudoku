@@ -3,11 +3,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import Cell from "./Cell.jsx";
 import Card from "./Card.jsx";
-import { copy, initialize, collectColumns } from "../store/boardSlice.js";
+import {
+  copy,
+  initialize,
+  collectColumns,
+  fillRandomDecision,
+} from "../store/boardSlice.js";
 
 export default function Board() {
   const dispatch = useDispatch();
   const [showCollectButtons, setShowCollectButtons] = useState(false);
+  const [fill, setFill] = useState(false);
 
   const showCollectHandler = () => {
     setShowCollectButtons(true);
@@ -22,13 +28,23 @@ export default function Board() {
     dispatch(collectColumns());
   };
 
+  const fillRandomDecisionHandler = () => {
+    dispatch(fillRandomDecision());
+    setFill(true);
+  };
+
+  const randomColor = () => {
+    const colors = ["bg-amber-950", "bg-amber-400", "bg-amber-500"];
+    const random = Math.floor(Math.random() * 3);
+    return colors[random];
+  };
+
   const counter = useSelector((state) => state.board.filledCellsCounter);
   const board = useSelector((state) => state.board.board);
   const board2 = useSelector((state) => state.board.board2);
 
-  const test = useSelector((state) => state.board.bigArray);
-
-  console.log(test);
+  const solution = useSelector((state) => state.board.bigArray);
+  console.log(solution);
 
   return (
     <Container>
@@ -50,21 +66,23 @@ export default function Board() {
                         : ""
                     }`}
                   >
-                    {cell !== 0 ? (
+                    {cell.number !== 0 ? (
                       <Cell
                         isEmpty={false}
                         cellIndex={cellIndex}
                         rowIndex={rowIndex}
+                        fill={fill}
                       >
-                        <Card number={cell} color={"bg-amber-950"} />
-                        <Card number={cell} color={"bg-amber-400"} />
-                        <Card number={cell} color={"bg-amber-500"} />
+                        {cell.cards.map((color) => (
+                          <Card number={cell.number} color={color} />
+                        ))}
                       </Cell>
                     ) : (
                       <Cell
                         isEmpty={true}
                         cellIndex={cellIndex}
                         rowIndex={rowIndex}
+                        fill={fill}
                       ></Cell>
                     )}
                   </div>
@@ -73,6 +91,17 @@ export default function Board() {
             </div>
           );
         })}
+      </div>
+      <div className="grid grid-cols-9 gap-x-20 mt-2">
+        {solution[0].length > 0 &&
+          solution
+            .filter((arr, index) => index < 9)
+            .map((filteredArr) =>
+              filteredArr.map((number) => {
+                const color = randomColor();
+                return <Card className={"m-1"} color={color} />;
+              }),
+            )}
       </div>
       {counter >= 81 && (
         <div className="flex flex-col m-2 justify-around">
@@ -87,6 +116,12 @@ export default function Board() {
             onClick={showCollectHandler}
           >
             Verify
+          </button>
+          <button
+            className="flex m-2 justify-around text-black p-4 tetx-xl border border-black rounded-2xl hover:bg-gray-200"
+            onClick={fillRandomDecisionHandler}
+          >
+            Fill Random Decision
           </button>
           {showCollectButtons && (
             <div className="flex justify-around p-2 m-2">

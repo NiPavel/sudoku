@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   filledCellsCounter: 81,
+  indexForInsert: 0,
   index: 0,
   board: [[], [], [], [], [], [], [], [], []],
   board2: [],
@@ -74,6 +75,7 @@ const boardSlice = createSlice({
   initialState,
   reducers: {
     initialize: (state, action) => {
+      state.indexForInsert = 0;
       let counter = 0;
       const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
       for (let i = 0; i < 9; i++) {
@@ -86,13 +88,28 @@ const boardSlice = createSlice({
               !numberInColumn(number, j, state.board) &&
               !numberInSubGrid(number, state.board, i, j)
             ) {
-              state.board[i][j] = numbers[index];
+              state.board[i][j] = {
+                id: state.indexForInsert,
+                number: numbers[index],
+                cards: ["bg-amber-950", "bg-amber-400", "bg-amber-500"],
+              };
               counter++;
+              state.indexForInsert++;
             } else {
-              state.board[i][j] = 0;
+              state.board[i][j] = {
+                id: state.indexForInsert,
+                number: 0,
+                cards: ["bg-amber-950", "bg-amber-400", "bg-amber-500"],
+              };
+              state.indexForInsert++;
             }
           } else {
-            state.board[i][j] = 0;
+            state.board[i][j] = {
+              id: state.indexForInsert,
+              number: 0,
+              cards: ["bg-amber-950", "bg-amber-400", "bg-amber-500"],
+            };
+            state.indexForInsert++;
           }
         }
       }
@@ -103,7 +120,7 @@ const boardSlice = createSlice({
     insertNumber: (state, action) => {
       const { cellIndex, number, rowIndex } = action.payload;
       state.filledCellsCounter++;
-      state.board2[rowIndex][cellIndex] = number;
+      state.board2[rowIndex][cellIndex].number = number;
     },
     collectColumns: (state) => {
       for (let i = 0; i < 9; i++) {
@@ -113,10 +130,24 @@ const boardSlice = createSlice({
         state.index = state.index + 1;
       }
     },
+    fillRandomDecision: (state) => {
+      for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+          if (state.board2[i][j] === 0) {
+            state.board2[i][j].number = Math.floor(Math.random() * 8) + 1;
+          }
+        }
+      }
+    },
   },
 });
 
-export const { insertNumber, initialize, copy, collectColumns } =
-  boardSlice.actions;
+export const {
+  insertNumber,
+  initialize,
+  copy,
+  collectColumns,
+  fillRandomDecision,
+} = boardSlice.actions;
 
 export default boardSlice.reducer;
