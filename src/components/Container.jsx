@@ -1,6 +1,6 @@
 export default function Container({ children }) {
   return (
-    <div className="container flex flex-col justify-center items-center m-4 p-4 h-full w-full bg-amber-50">
+    <div className="flex flex-row items-center m-40 p-1 bg-amber-50">
       {children}
     </div>
   );

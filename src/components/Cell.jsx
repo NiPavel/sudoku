@@ -33,25 +33,8 @@ const Cell = ({ children, isEmpty, cellIndex, rowIndex, fill }) => {
       onClick={isEmpty && setOpenDialogHandler}
     >
       {openDialog && <Digits setNumber={setChosenNumberHandler} />}
-      {board[rowIndex][cellIndex] !== 0 && isEmpty && (fill || filled) && (
-        <Card
-          hiddenNumber={board[rowIndex][cellIndex]}
-          color={"bg-amber-950"}
-        />
-      )}
-      {board[rowIndex][cellIndex] !== 0 && isEmpty && (fill || filled) && (
-        <Card
-          hiddenNumber={board[rowIndex][cellIndex]}
-          color={"bg-amber-400"}
-        />
-      )}
-      {board[rowIndex][cellIndex] !== 0 && isEmpty && (fill || filled) && (
-        <Card
-          hiddenNumber={board[rowIndex][cellIndex]}
-          color={"bg-amber-500"}
-        />
-      )}
-      {children}
+
+      {(fill || filled) && children}
     </div>
   );
 };
